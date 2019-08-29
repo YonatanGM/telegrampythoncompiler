@@ -24,19 +24,23 @@ async def start(event):
     chat = await event.get_sender()
     async with bot.conversation(chat) as conv:
         await conv.send_message('Python 3.7.4 ({} {})\n >>> send code here'.format(chat.username, str(datetime.now())))
-            
         code = await conv.get_response()
         if code.text:
             name = str(chat.id)+'.py'
             with open(name, 'w') as main:
-                main.write(code.text)
+                main.write("import builtins, os\n")
+                main.write("builtins.open = lambda x, y: print('NameError: name open is not defined')\n")
+                main.write(code.text + '\n')
 
             command = subprocess.Popen(['python', name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             (output, error) = command.communicate()
-            if error:
-                await conv.send_message('>>>\n{}'.format(error.decode('utf-8')))
-            else:
-                await conv.send_message('>>>\n{}'.format(output.decode('utf-8')))
+            if 'os' in code.text or 'sys' in code.text:
+                await conv.send_message('>>>\n{}'.format("\U0001F610"))
+            else: 
+                if error:
+                    await conv.send_message('>>>\n{}'.format(error.decode('utf-8')))
+                else:
+                    await conv.send_message('>>>\n{}'.format(output.decode('utf-8')))
 
 
 
