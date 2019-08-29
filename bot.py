@@ -40,14 +40,14 @@ async def start(event):
             except subprocess.TimeoutExpired:
                 command.kill()
                 await conv.send_message('>>>\n{}'.format("timeout\U0001F610"))
-                
-            if error:
-                if 'os' in error.decode('utf-8'):
-                    await conv.send_message('>>>\n{}'.format("\U0001F610"))
+            finally:    
+                if error:
+                    if 'os' in error.decode('utf-8'):
+                        await conv.send_message('>>>\n{}'.format("\U0001F610"))
+                    else:
+                        await conv.send_message('>>>\n{}'.format(error.decode('utf-8')))
                 else:
-                    await conv.send_message('>>>\n{}'.format(error.decode('utf-8')))
-            else:
-                await conv.send_message('>>>\n{}'.format(output.decode('utf-8')))
+                    await conv.send_message('>>>\n{}'.format(output.decode('utf-8')))
 
 
 
@@ -65,16 +65,20 @@ async def inlinehandler(event):
         main.write(event.text + '\n')
         
     command = subprocess.Popen(['python', name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (output, error) = command.communicate()
-
- 
-    if error:
-        if 'os' in error.decode('utf-8'):
-            await event.answer([builder.article('see output', text='>>>\n{}'.format("\U0001F610"))])
+    try:
+        output, error = command.communicate(timeout=10)
+    except subprocess.TimeoutExpired:
+        command.kill()
+        await conv.send_message('>>>\n{}'.format("timeout\U0001F610"))
+        
+    finally:
+        if error:
+            if 'os' in error.decode('utf-8'):
+                await event.answer([builder.article('see output', text='>>>\n{}'.format("\U0001F610"))])
+            else:
+                await event.answer([builder.article('see output', text='>>>\n{}'.format(error.decode('utf-8')))])
         else:
-            await event.answer([builder.article('see output', text='>>>\n{}'.format(error.decode('utf-8')))])
-    else:
-        await event.answer([builder.article('see output', text='>>>\n{}'.format(output.decode('utf-8')))])
+            await event.answer([builder.article('see output', text='>>>\n{}'.format(output.decode('utf-8')))])
 
 
         
