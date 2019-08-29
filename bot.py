@@ -28,19 +28,22 @@ async def start(event):
         if code.text:
             name = str(chat.id)+'.py'
             with open(name, 'w') as main:
-                main.write("import builtins, os\n")
+                main.write("import builtins, os, sys\n")
+                main.write("del os\n")
+                main.write("sys.modules['os']=None\n")
                 main.write("builtins.open = lambda x, y: print('NameError: name open is not defined')\n")
                 main.write(code.text + '\n')
 
             command = subprocess.Popen(['python', name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             (output, error) = command.communicate()
-            if 'os' in code.text or 'sys' in code.text:
-                await conv.send_message('>>>\n{}'.format("\U0001F610"))
-            else: 
-                if error:
-                    await conv.send_message('>>>\n{}'.format(error.decode('utf-8')))
+
+            if error:
+                if 'os' in error.decode('utf-8'):
+                    await conv.send_message('>>>\n{}'.format("\U0001F610"))
                 else:
-                    await conv.send_message('>>>\n{}'.format(output.decode('utf-8')))
+                    await conv.send_message('>>>\n{}'.format(error.decode('utf-8')))
+            else:
+                await conv.send_message('>>>\n{}'.format(output.decode('utf-8')))
 
 
 
@@ -51,19 +54,23 @@ async def inlinehandler(event):
     name = str(chat.id)+'.py'
         
     with open(name, 'w') as main:
-        main.write("import builtins, os\n")
+        main.write("import builtins, os, sys\n")
+        main.write("del os\n")
+        main.write("sys.modules['os']=None\n")
         main.write("builtins.open = lambda x, y: print('NameError: name open is not defined')\n")
         main.write(event.text + '\n')
         
     command = subprocess.Popen(['python', name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (output, error) = command.communicate()
-    if 'os' in event.text or 'sys' in event.text:
-        await event.answer([builder.article('see output', text='>>>\n{}'.format("\U0001F610"))])
-    else: 
-        if error:
-            await event.answer([builder.article('see output', text='>>>\n{}'.format(error.decode('utf-8')))])
+
+ 
+    if error:
+        if 'os' in error.decode('utf-8'):
+            await event.answer([builder.article('see output', text='>>>\n{}'.format("\U0001F610"))])
         else:
-            await event.answer([builder.article('see output', text='>>>\n{}'.format(output.decode('utf-8')))])
+            await event.answer([builder.article('see output', text='>>>\n{}'.format(error.decode('utf-8')))])
+    else:
+        await event.answer([builder.article('see output', text='>>>\n{}'.format(output.decode('utf-8')))])
 
 
         
