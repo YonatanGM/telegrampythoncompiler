@@ -39,8 +39,8 @@ async def start(event):
                 output, error = command.communicate(timeout=10)
             except subprocess.TimeoutExpired:
                 command.kill()
-                output, error = command.communicate()
-
+                await conv.send_message('>>>\n{}'.format("timeout\U0001F610"))
+                
             if error:
                 if 'os' in error.decode('utf-8'):
                     await conv.send_message('>>>\n{}'.format("\U0001F610"))
