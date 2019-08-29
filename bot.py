@@ -69,7 +69,7 @@ async def inlinehandler(event):
         output, error = command.communicate(timeout=10)
     except subprocess.TimeoutExpired:
         command.kill()
-        await conv.send_message('>>>\n{}'.format("timeout\U0001F610"))
+        await event.answer([builder.article('see output', text='>>>\n{}'.format("timeout\U0001F610"))])
         
     finally:
         if error:
