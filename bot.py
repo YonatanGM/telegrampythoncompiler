@@ -35,7 +35,11 @@ async def start(event):
                 main.write(code.text + '\n')
 
             command = subprocess.Popen(['python', name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            (output, error) = command.communicate()
+            try:
+                output, error = command.communicate(timeout=10)
+            except subprocess.TimeoutExpired:
+                command.kill()
+                output, error = command.communicate()
 
             if error:
                 if 'os' in error.decode('utf-8'):
