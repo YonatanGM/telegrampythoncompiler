@@ -10,7 +10,7 @@ Telegram bot for executing python code snippets.
 
 
 
-#### bot in action: just send your code and you get the output. 
+#### bot in action: just send your code and you get the output. Inline mode is also supported.
 I have blocked some imports and functions for security. 
 
 ![interface](Capture.PNG)
