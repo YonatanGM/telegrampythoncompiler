@@ -1,5 +1,7 @@
 # Telegrampythoncompiler
 Telegram bot for executing python code snippets. 
+[pycompilerBot](https://t.me/pycompileBot)
+
 
 ## Installation
 1. download project 
