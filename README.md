@@ -14,6 +14,6 @@ Telegram bot for executing python code snippets
 
 
 #### bot in action: *Inline mode also supported.
-(I have blocked some imports and functions for security) 
+
 
 ![interface](Capture.PNG)
